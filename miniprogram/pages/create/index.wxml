@@ -1,0 +1,99 @@
+<view class="page create">
+  <view class="scene-hero" wx:if="{{scene}}">
+    <view class="scene-hero-badge">{{scene.badge}}</view>
+    <view class="scene-hero-text">
+      <view class="scene-hero-name">{{scene.name}}</view>
+      <view class="scene-hero-desc">{{scene.desc}}</view>
+    </view>
+  </view>
+
+  <view class="form-card">
+    <view class="field">
+      <view class="field-head">
+        <text class="field-label">称呼</text>
+        <text class="field-optional">选填</text>
+      </view>
+      <input
+        class="text-input"
+        value="{{name}}"
+        maxlength="20"
+        placeholder="{{placeholder}}"
+        placeholder-style="color:#b3a79c"
+        cursor-spacing="140"
+        confirm-type="done"
+        bindinput="onNameInput"
+      />
+      <view class="field-hint">留空也可以生成通用祝福。</view>
+    </view>
+
+    <view class="field" wx:if="{{relations.length}}">
+      <view class="field-head">
+        <text class="field-label">关系</text>
+        <text class="field-optional">选填</text>
+      </view>
+      <view class="chips">
+        <view
+          wx:for="{{relations}}"
+          wx:key="id"
+          class="chip {{role === item.id ? 'chip--active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onRoleTap"
+          hover-class="chip--pressed"
+          aria-role="button"
+          aria-label="{{item.label}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <view class="field-head">
+        <text class="field-label">风格</text>
+      </view>
+      <view class="option-grid">
+        <view
+          wx:for="{{styles}}"
+          wx:key="id"
+          class="option {{style === item.id ? 'option--active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onStyleTap"
+          hover-class="option--pressed"
+          aria-role="button"
+          aria-label="{{item.name}}，{{item.desc}}"
+        >
+          <view class="option-name">{{item.name}}</view>
+          <view class="option-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="field field--last">
+      <view class="field-head">
+        <text class="field-label">长度</text>
+      </view>
+      <view class="option-grid option-grid--three">
+        <view
+          wx:for="{{lengths}}"
+          wx:key="id"
+          class="option {{length === item.id ? 'option--active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onLengthTap"
+          hover-class="option--pressed"
+          aria-role="button"
+          aria-label="{{item.name}}，{{item.desc}}"
+        >
+          <view class="option-name">{{item.name}}</view>
+          <view class="option-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <button
+      class="btn-primary"
+      hover-class="btn-primary--pressed"
+      bindtap="onGenerate"
+    >生成祝福语</button>
+    <view class="bottom-note">本地模板生成 · 填写内容不会上传</view>
+  </view>
+</view>

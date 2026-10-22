@@ -1,0 +1,103 @@
+.orders {
+  padding-top: 20rpx;
+}
+
+.orders-head {
+  padding: 8rpx 8rpx 30rpx;
+}
+
+.orders-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+.orders-sub {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: #9c92b4;
+}
+
+.order-item {
+  margin-bottom: 20rpx;
+  padding: 26rpx 26rpx 22rpx;
+  border: 1rpx solid #332a44;
+  border-radius: 24rpx;
+  background: #211a2d;
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.28);
+}
+
+.order-item--pressed {
+  background: #292136;
+}
+
+.order-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-item-name {
+  flex: 1;
+  padding-right: 18rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #ece7f7;
+}
+
+.order-item-status {
+  flex-shrink: 0;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 21rpx;
+  line-height: 1.7;
+}
+
+.status-wait {
+  background: rgba(255, 193, 7, 0.14);
+  color: #ffd54f;
+}
+
+.status-delivering {
+  background: rgba(139, 92, 246, 0.18);
+  color: #b9a8ff;
+}
+
+.status-done {
+  background: rgba(76, 175, 80, 0.16);
+  color: #81c784;
+}
+
+.status-closed {
+  background: rgba(255, 255, 255, 0.07);
+  color: #9c92b4;
+}
+
+.status-unknown {
+  background: rgba(255, 255, 255, 0.07);
+  color: #9c92b4;
+}
+
+.order-item-meta {
+  margin-top: 10rpx;
+  font-size: 23rpx;
+  color: #857a9e;
+}
+
+.orders-foot {
+  margin-top: 12rpx;
+  text-align: center;
+}
+
+.orders-link {
+  display: inline-block;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  color: #b9a8ff;
+  font-size: 24rpx;
+}
+
+.orders-link--pressed {
+  background: #2a2138;
+}

@@ -1,0 +1,171 @@
+/**app.wxss**/
+page {
+  background: #16121d;
+  background-image: linear-gradient(
+    180deg,
+    #241a38 0%,
+    #16121d 30%,
+    #16121d 100%
+  );
+  background-repeat: no-repeat;
+  color: #ece7f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 32rpx 32rpx 64rpx;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  line-height: normal;
+  font-size: inherit;
+  color: inherit;
+}
+
+button::after {
+  border: none;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 12rpx 4rpx 24rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+.section-title::before {
+  content: "";
+  width: 8rpx;
+  height: 28rpx;
+  margin-right: 14rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, #a06cff 0%, #6d3ef0 100%);
+}
+
+.section-hint {
+  font-size: 24rpx;
+  color: #857a9e;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: linear-gradient(135deg, #a06cff 0%, #7c4df2 58%, #5b2ec9 100%);
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  box-shadow: 0 16rpx 34rpx rgba(124, 77, 242, 0.4);
+  transition: box-shadow 0.18s ease, transform 0.18s ease,
+    filter 0.18s ease;
+}
+
+.btn-primary--pressed {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6a35d6 100%);
+  box-shadow: 0 8rpx 18rpx rgba(124, 77, 242, 0.3);
+  transform: translateY(2rpx);
+}
+
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 92rpx;
+  border-radius: 46rpx;
+  border: 1rpx solid #3a3050;
+  color: #cfc6e2;
+  font-size: 28rpx;
+  background: #241d31;
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3);
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.btn-ghost--pressed {
+  background: #2d2440;
+  transform: translateY(2rpx);
+}
+
+.footnote {
+  margin-top: 28rpx;
+  padding: 0 8rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: #857a9e;
+  text-align: center;
+}
+
+/* 状态占位：未配置、未接入、加载失败与空列表共用 */
+.state-box {
+  padding: 44rpx 30rpx;
+  border: 1rpx dashed #4a3d63;
+  border-radius: 24rpx;
+  background: #201a2c;
+  text-align: center;
+}
+
+.state-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #ece7f7;
+}
+
+.state-text {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: #9c92b4;
+}
+
+.state-action {
+  margin-top: 26rpx;
+}
+
+.btn-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 64rpx;
+  padding: 0 30rpx;
+  border: 1rpx solid #4a3d63;
+  border-radius: 999rpx;
+  color: #b9a8ff;
+  font-size: 24rpx;
+  line-height: 1;
+  background: #241d31;
+  box-shadow: 0 4rpx 12rpx rgba(124, 77, 242, 0.2);
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.btn-copy--pressed {
+  background: #2d2440;
+  transform: translateY(1rpx);
+}
+
+.btn-copy[disabled] {
+  border-color: #362d47;
+  color: #6a6183;
+}

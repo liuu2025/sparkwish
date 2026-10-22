@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/create/index",
+    "pages/result/index",
+    "pages/pro/index",
+    "pages/pro/orders/index",
+    "pages/pro/order/index"
+  ],
+  "window": {
+    "backgroundColor": "#16121D",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#16121D",
+    "navigationBarTitleText": "祝福语",
+    "navigationBarTextStyle": "white"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

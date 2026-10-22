@@ -1,0 +1,42 @@
+<view class="page home">
+  <view class="hero">
+    <view class="hero-mark">祝</view>
+    <view class="hero-title">写一句恰到好处的祝福</view>
+    <view class="hero-sub">生日 · 节日 · 婚礼 · 升学，一句话就够了</view>
+  </view>
+
+  <view class="section-head">
+    <text class="section-title">选择场景</text>
+    <text class="section-hint">{{scenes.length}} 个场景</text>
+  </view>
+
+  <view class="scene-grid">
+    <view
+      class="scene-card"
+      wx:for="{{scenes}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSelectScene"
+      hover-class="scene-card--pressed"
+      aria-role="button"
+      aria-label="选择{{item.name}}场景"
+    >
+      <view class="scene-name">{{item.name}}</view>
+      <view class="scene-desc">{{item.desc}}</view>
+      <view class="scene-arrow">→</view>
+    </view>
+  </view>
+
+  <view
+    class="teaser"
+    hover-class="teaser--pressed"
+    bindtap="onOpenPro"
+    aria-role="button"
+    aria-label="高级祝福语"
+  >
+    <view class="teaser-title">高级祝福语</view>
+    <view class="teaser-arrow">→</view>
+  </view>
+
+  <view class="version">版本 v{{version}}</view>
+</view>

@@ -1,0 +1,85 @@
+.pro {
+  padding-top: 20rpx;
+}
+
+.pro-head {
+  padding: 8rpx 8rpx 30rpx;
+}
+
+.pro-sub {
+  font-size: 25rpx;
+  line-height: 1.7;
+  color: #9c92b4;
+}
+
+.plan-card {
+  margin-bottom: 26rpx;
+  padding: 30rpx 28rpx 26rpx;
+  border: 1rpx solid #332a44;
+  border-radius: 26rpx;
+  background: #211a2d;
+  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.3);
+}
+
+.plan-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.plan-name {
+  flex: 1;
+  padding-right: 20rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.plan-price {
+  flex-shrink: 0;
+  color: #b9a8ff;
+  font-size: 34rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+.plan-desc {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  line-height: 1.75;
+  color: #9c92b4;
+}
+
+.plan-btn {
+  margin-top: 26rpx;
+}
+
+.plan-btn[disabled] {
+  background: #2e2540;
+  color: #6a6183;
+  box-shadow: none;
+}
+
+.plan-hint {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: #857a9e;
+  text-align: center;
+}
+
+.pro-orders {
+  margin-top: 36rpx;
+  padding: 26rpx;
+  border: 1rpx solid #332a44;
+  border-radius: 22rpx;
+  background: #211a2d;
+  color: #cfc6e2;
+  font-size: 26rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.26);
+}
+
+.pro-orders--pressed {
+  background: #292136;
+}

@@ -1,0 +1,49 @@
+<view class="page pro">
+  <view class="pro-head">
+    <view class="pro-sub">付款确认后可在“我的订单”查看卡密。</view>
+  </view>
+
+  <view class="state-box" wx:if="{{!catalogReady}}">
+    <view class="state-title">商品信息暂未配置</view>
+    <view class="state-text">套餐名称与价格将在配置完成后显示，当前暂不支持购买。</view>
+  </view>
+
+  <view class="state-box" wx:elif="{{loading}}">
+    <view class="state-text">正在获取商品信息…</view>
+  </view>
+
+  <view class="state-box" wx:elif="{{failed}}">
+    <view class="state-title">商品信息暂时无法获取</view>
+    <view class="state-text">{{errorText}}</view>
+    <button class="btn-ghost state-action" hover-class="btn-ghost--pressed" bindtap="onRetry">重新获取</button>
+  </view>
+
+  <view class="state-box" wx:elif="{{!plans.length}}">
+    <view class="state-title">当前暂无在售套餐</view>
+    <view class="state-text">套餐上架后会显示在这里。</view>
+  </view>
+
+  <block wx:else>
+    <view class="plan-card" wx:for="{{plans}}" wx:for-item="plan" wx:key="id">
+      <view class="plan-top">
+        <view class="plan-name">{{plan.name}}</view>
+        <view class="plan-price">¥{{plan.price}}</view>
+      </view>
+
+      <view class="plan-desc" wx:if="{{plan.description}}">{{plan.description}}</view>
+
+      <button
+        class="btn-primary plan-btn"
+        hover-class="btn-primary--pressed"
+        disabled="{{!plan.purchasable}}"
+        data-id="{{plan.id}}"
+        bindtap="onBuy"
+      >选择此套餐</button>
+      <view class="plan-hint" wx:if="{{plan.buyHint}}">{{plan.buyHint}}</view>
+    </view>
+  </block>
+
+  <view class="pro-orders" hover-class="pro-orders--pressed" bindtap="onOrders" aria-role="button" aria-label="查看我的订单">
+    我的订单 ›
+  </view>
+</view>

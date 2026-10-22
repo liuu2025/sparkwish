@@ -1,0 +1,62 @@
+<view class="page order">
+  <view class="state-box" wx:if="{{!ordersReady}}">
+    <view class="state-title">订单服务暂未接入</view>
+    <view class="state-text">接入完成后，可在此查看订单状态、祝福语与卡密。</view>
+  </view>
+
+  <block wx:else>
+    <view class="state-box" wx:if="{{loading}}">
+      <view class="state-text">正在获取订单…</view>
+    </view>
+
+    <view class="state-box" wx:elif="{{failed}}">
+      <view class="state-title">订单暂时无法获取</view>
+      <view class="state-text">{{errorText}}</view>
+      <button class="btn-ghost state-action" hover-class="btn-ghost--pressed" bindtap="onRefresh">重新获取</button>
+    </view>
+
+    <block wx:else>
+      <view class="status-bar status-{{state.tone}}">
+        <view class="status-title">{{state.title}}</view>
+        <view class="status-hint" wx:if="{{state.hint}}">{{state.hint}}</view>
+      </view>
+
+      <view class="section" wx:if="{{order}}">
+        <view class="section-title">商品</view>
+        <view class="kv"><text class="kv-label">套餐</text><text class="kv-value">{{order.name}}</text></view>
+        <view class="kv"><text class="kv-label">金额</text><text class="kv-value">¥{{order.price}}</text></view>
+        <view class="kv"><text class="kv-label">订单号</text><text class="kv-value">{{order.id}}</text></view>
+        <view class="kv"><text class="kv-label">下单时间</text><text class="kv-value">{{order.createdText}}</text></view>
+        <view class="kv" wx:if="{{order.paidText}}"><text class="kv-label">付款时间</text><text class="kv-value">{{order.paidText}}</text></view>
+      </view>
+
+      <view class="section" wx:if="{{order}}">
+        <view class="section-head">
+          <view class="section-title">祝福语</view>
+          <button
+            class="btn-copy"
+            hover-class="btn-copy--pressed"
+            disabled="{{!copyText}}"
+            bindtap="onCopyBlessing"
+          >复制祝福语</button>
+        </view>
+        <text class="blessing-text" wx:if="{{blessing}}" user-select="{{true}}">{{blessing}}</text>
+        <view class="placeholder" wx:if="{{!blessing && !cardCode}}">付款确认后，祝福语会显示在这里。</view>
+      </view>
+
+      <view class="order-actions" wx:if="{{order}}">
+        <button
+          class="btn-primary"
+          hover-class="btn-primary--pressed"
+          disabled="{{!state.canPay}}"
+          bindtap="onPay"
+          wx:if="{{showPay}}"
+        >去支付</button>
+        <button class="btn-ghost order-refresh" hover-class="btn-ghost--pressed" bindtap="onRefresh">刷新状态</button>
+        <view class="order-pay-hint" wx:if="{{payHint}}">{{payHint}}</view>
+      </view>
+
+      <view class="order-back" hover-class="order-back--pressed" bindtap="onBackList">返回订单列表</view>
+    </block>
+  </block>
+</view>

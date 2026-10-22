@@ -1,0 +1,136 @@
+.order {
+  padding-top: 20rpx;
+}
+
+.status-bar {
+  margin-bottom: 26rpx;
+  padding: 28rpx 26rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #241b36 0%, #1e1730 100%);
+  border: 1rpx solid #3a2d55;
+}
+
+.status-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.status-hint {
+  margin-top: 10rpx;
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: #9c92b4;
+}
+
+.status-wait .status-title {
+  color: #ffd54f;
+}
+
+.status-delivering .status-title {
+  color: #b9a8ff;
+}
+
+.status-done .status-title {
+  color: #81c784;
+}
+
+.status-closed .status-title {
+  color: #9c92b4;
+}
+
+.status-unknown .status-title {
+  color: #9c92b4;
+}
+
+.section {
+  margin-bottom: 24rpx;
+  padding: 26rpx;
+  border: 1rpx solid #332a44;
+  border-radius: 24rpx;
+  background: #211a2d;
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.26);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #ece7f7;
+}
+
+.kv {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 14rpx;
+}
+
+.kv-label {
+  flex-shrink: 0;
+  width: 140rpx;
+  color: #857a9e;
+  font-size: 23rpx;
+}
+
+.kv-value {
+  flex: 1;
+  color: #cfc6e2;
+  font-size: 25rpx;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.blessing-text {
+  display: block;
+  margin-top: 18rpx;
+  color: #ece7f7;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 30rpx;
+  line-height: 1.95;
+  text-align: justify;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.placeholder {
+  margin-top: 16rpx;
+  padding: 22rpx 20rpx;
+  border-radius: 16rpx;
+  background: #2a2138;
+  color: #857a9e;
+  font-size: 23rpx;
+  line-height: 1.7;
+}
+
+.order-actions {
+  margin-top: 10rpx;
+}
+
+.order-refresh {
+  margin-top: 18rpx;
+}
+
+.order-pay-hint {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: #857a9e;
+  text-align: center;
+}
+
+.order-back {
+  margin-top: 30rpx;
+  padding: 20rpx;
+  color: #b9a8ff;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.order-back--pressed {
+  background: #2a2138;
+}

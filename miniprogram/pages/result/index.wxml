@@ -1,0 +1,58 @@
+<view class="page result">
+  <view class="result-head">
+    <view class="result-kicker">{{summary}}</view>
+    <view class="result-title">为你写了三句</view>
+    <view class="result-sub">本地模板组合，不是 AI 生成。可以逐句复制，也可以换一组。</view>
+  </view>
+
+  <view class="result-list" wx:if="{{results.length}}">
+    <view class="result-card" wx:for="{{results}}" wx:key="id">
+      <view class="result-top">
+        <view class="result-index">0{{index + 1}}</view>
+        <view class="result-label">候选 {{index + 1}}</view>
+      </view>
+      <text class="result-text" user-select="{{true}}">{{item.text}}</text>
+      <view class="result-actions">
+        <button
+          class="btn-copy"
+          hover-class="btn-copy--pressed"
+          data-index="{{index}}"
+          bindtap="onCopy"
+        >复制这句</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="result-empty" wx:else>
+    <view class="result-empty-title">这次没有组合出合适的句子</view>
+    <view class="result-empty-text">可以返回修改，或再换一组试试。</view>
+  </view>
+
+  <view class="result-tools">
+    <button
+      class="btn-primary"
+      hover-class="btn-primary--pressed"
+      bindtap="onRefresh"
+    >换一组</button>
+    <button
+      class="btn-ghost result-back"
+      hover-class="btn-ghost--pressed"
+      bindtap="onBackEdit"
+    >返回修改</button>
+  </view>
+
+  <view
+    class="result-teaser"
+    hover-class="result-teaser--pressed"
+    bindtap="onOpenPro"
+    aria-role="button"
+    aria-label="高级祝福语"
+  >
+    <text class="result-teaser-text">想看高级祝福语？点这里查看。</text>
+    <text class="result-teaser-arrow">›</text>
+  </view>
+
+  <view class="footnote">
+    祝福语由本地模板、规则和随机组合生成，未使用 AI；你填写的内容不会上传。
+  </view>
+</view>
