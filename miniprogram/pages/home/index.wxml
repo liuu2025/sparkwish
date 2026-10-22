@@ -38,5 +38,5 @@
     <view class="teaser-arrow">→</view>
   </view>
 
-  <view class="version">版本 v{{version}}</view>
+  <view class="version" wx:if="{{version}}">版本 {{version}}</view>
 </view>
