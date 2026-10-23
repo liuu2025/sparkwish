@@ -1,4 +1,3 @@
-// 免费版场景与语句池。所有内容均在本地参与组合，不发起网络请求。
 const STYLES = [
   { id: 'warm', name: '温馨', desc: '柔和真诚' },
   { id: 'formal', name: '正式', desc: '得体庄重' },
@@ -12,7 +11,6 @@ const LENGTHS = [
   { id: 'long', name: '长文', desc: '完整一段' },
 ];
 
-// 结尾句按风格复用，避免每个场景重复维护。
 const CLOSINGS = {
   warm: [
     '愿你被生活温柔以待，也始终有爱可依。',

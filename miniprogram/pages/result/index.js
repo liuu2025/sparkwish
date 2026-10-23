@@ -101,8 +101,6 @@ Page({
 
     wx.setClipboardData({
       data: item.text,
-      // 成功后由微信复制接口自带的“内容已复制”轻提示反馈，
-      // 不再叠加自定义 toast，避免两个提示同时出现。
       fail: () => {
         wx.showToast({
           title: '复制失败，请长按选择文字',

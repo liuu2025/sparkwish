@@ -1,4 +1,3 @@
-// 本地祝福语组合器：只做模板选择与拼接，不联网、不使用 AI。
 const { CLOSINGS } = require('../data/scenes');
 
 function shuffle(list) {
@@ -53,7 +52,6 @@ function ensurePeriod(text) {
   return /[。！？…”」』]$/.test(text) ? text : text + '。';
 }
 
-// 同一段里避免反复出现相同的正式用语或主题词。
 const KEY_PHRASES = [
   '谨向您',
   '谨以此',
@@ -182,12 +180,10 @@ function buildOne(scene, style, length, role, name, used) {
   };
 
   if (length === 'short') {
-    // 短句只保留一个核心句加一个结尾，不再额外叠加祝愿。
     addWishes(parts.length === 0 ? 1 : 0);
   } else if (length === 'medium') {
     addWishes(2);
   } else {
-    // 长文：先放一条祝愿，再插入具体展开，最后补一条祝愿，保证展开句不被祝愿挤掉。
     addWishes(1);
     const details = (scene.longDetails && scene.longDetails[style]) || [];
     const candidates = orderedByFreshness(details, used.details).filter(
@@ -201,7 +197,6 @@ function buildOne(scene, style, length, role, name, used) {
       }
     }
     if (!picked && candidates.length) {
-      // 展开句是长文的核心，宁可重复一个主题词，也不能整段缺失。
       picked = candidates[0];
       local[picked] = true;
       parts.push(picked);
@@ -209,7 +204,6 @@ function buildOne(scene, style, length, role, name, used) {
     if (picked) {
       used.details[picked] = true;
     } else {
-      // 该风格没有展开句时，退回一条普通祝愿，保证长文篇幅。
       addWishes(1);
     }
     addWishes(1);
@@ -234,10 +228,8 @@ function buildOne(scene, style, length, role, name, used) {
     used.closings[closing] = true;
   }
 
-  // 关键字去重可能让长文变短，按长度补足句子；只跳过完全重复的整句。
   const minParts = length === 'long' ? 4 : length === 'medium' ? 3 : 2;
   if (parts.length < minParts) {
-    // 先按正常规则补句，实在凑不够再放宽主题词限制。
     addFromPool(scene.wishes[style] || [], minParts - parts.length, used.wishes, add);
     if (parts.length < minParts) {
       addFromPool(
@@ -316,7 +308,6 @@ function generate(options) {
   const texts = Object.create(null);
   const firstParts = Object.create(null);
 
-  // 逐级放宽：先尽量避开上一组，再保证三条互不相同。
   const limits = [0.6, 0.8];
   for (let phase = 0; phase < limits.length; phase += 1) {
     let attempts = 0;
@@ -336,7 +327,6 @@ function generate(options) {
     }
   }
 
-  // 语句池较小时，只要求同组三条文字不同、开头不同。
   let attempts = 0;
   while (results.length < 3 && attempts < 240) {
     attempts += 1;
@@ -350,7 +340,6 @@ function generate(options) {
     results.push(built);
   }
 
-  // 最后的兜底：允许开头重复，但文字仍不能完全相同。
   attempts = 0;
   while (results.length < 3 && attempts < 240) {
     attempts += 1;

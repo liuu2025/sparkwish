@@ -1,10 +1,6 @@
-// 小程序虚拟支付的调用编排。
-// 顺序固定：取/复用 checkout_id → 下单 → 取支付参数 → 调起虚拟支付 → 请中枢核对。
-// 任何一步失败都不在前端判定“支付成功”，只回到订单详情等待中枢结果。
 const config = require('../config/shop');
 const shop = require('./shop');
 
-// 同一套餐中断后沿用原 checkout_id，不重复下单
 function ensureCheckout(plan) {
   const saved = shop.loadAttempt();
   const reusable =
@@ -43,7 +39,6 @@ function createOrder(plan) {
   );
 }
 
-// 调起微信虚拟支付，只负责把支付界面拉起并返回结果
 function requestPayment(virtualPayment) {
   return new Promise((resolve, reject) => {
     if (!virtualPayment) {
@@ -70,7 +65,6 @@ function requestPayment(virtualPayment) {
   });
 }
 
-// 取支付参数并拉起支付；query_code 只走请求体，不落 URL
 function payForOrder(queryCode) {
   if (!queryCode) return Promise.reject(new Error('订单查询号缺失，请刷新后重试'));
   return shop.payOrder(queryCode).then((data) => requestPayment(data && data.virtual_payment));

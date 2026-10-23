@@ -1,8 +1,4 @@
 <view class="page pro">
-  <view class="pro-head">
-    <view class="pro-sub">付款确认后可在“我的订单”查看卡密。</view>
-  </view>
-
   <view class="state-box" wx:if="{{!catalogReady}}">
     <view class="state-title">商品信息暂未配置</view>
     <view class="state-text">套餐名称与价格将在配置完成后显示，当前暂不支持购买。</view>

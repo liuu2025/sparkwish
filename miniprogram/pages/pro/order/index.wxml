@@ -1,7 +1,7 @@
 <view class="page order">
   <view class="state-box" wx:if="{{!ordersReady}}">
     <view class="state-title">订单服务暂未接入</view>
-    <view class="state-text">接入完成后，可在此查看订单状态、祝福语与卡密。</view>
+    <view class="state-text">接入完成后，可在此查看订单状态与祝福语。</view>
   </view>
 
   <block wx:else>

@@ -5,7 +5,6 @@ const { describe, formatAmount, formatTime } = require('../../../utils/order-sta
 const { SCENES, STYLES, LENGTHS } = require('../../../data/scenes');
 const blessingGen = require('../../../utils/blessing');
 
-// 中枢的 query/sync 返回订单本身；兼容外层再包一层 order 的情况。
 function pickOrder(res) {
   if (!res) return null;
   if (res.order) return res.order;
@@ -24,7 +23,6 @@ function toOrderView(order) {
   };
 }
 
-// 本地随机组合一段祝福语，随卡密一起提供给用户复制。
 function randomBlessing() {
   const scene = SCENES[Math.floor(Math.random() * SCENES.length)];
   const styleItem = STYLES[Math.floor(Math.random() * STYLES.length)];
@@ -95,7 +93,6 @@ Page({
 
   onShow() {
     if (!this.data.ordersReady || !this.orderID || !this.queryCode) return;
-    // 轻量刷新：只读取订单，不触发中枢核对。
     shop
       .queryOrder(this.queryCode)
       .then((res) => {
@@ -103,7 +100,6 @@ Page({
         if (next) this.applyOrder(next);
       })
       .catch(() => {
-        // 自动刷新失败不改变页面结论。
       });
   },
 
@@ -121,12 +117,9 @@ Page({
       });
       return;
     }
-    // 私密查询号只留在内存，不渲染、不写缓存、不拼进页面路径。
     if (found.query_code) this.queryCode = found.query_code;
     const state = describe(found, { paymentEnabled: config.paymentEnabled === true });
     const pending = state.key === 'pending';
-    // 高级祝福语展示位：本地随机组合一段祝福语，随卡密一起提供。
-    // 订单恢复只恢复订单与卡密，不宣称恢复原文。
     const cardCode = state.showCard ? found.card_code || '' : '';
     let blessing = this.blessingText || '';
     if (!blessing && cardCode) {
@@ -151,7 +144,6 @@ Page({
       this.load();
       return;
     }
-    // 请中枢核对支付；结果未知时保留当前展示，不判定订单失败，也不重新下单。
     wx.showLoading({ title: '正在核对', mask: true });
     shop
       .syncOrder(this.queryCode)

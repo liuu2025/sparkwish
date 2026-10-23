@@ -3,8 +3,6 @@ const shop = require('../../utils/shop');
 const pay = require('../../utils/pay');
 const { formatAmount } = require('../../utils/order-state');
 
-// 商品卡只展示名称与价格；权益明细不在小程序内展示。
-
 function toPlanView(plan) {
   const purchasable = config.paymentEnabled === true && plan.mini_ready !== false;
   let buyHint = '';
@@ -15,7 +13,6 @@ function toPlanView(plan) {
   }
   return {
     id: plan.id,
-    // 下单必须带目录里的当前版本，不能沿用旧值
     version: plan.version,
     name: plan.name,
     price: formatAmount(plan.price_cents),
@@ -58,28 +55,35 @@ Page({
       return;
     }
     this.setData({ catalogReady: true });
-    this.load();
+    const cached = shop.loadCatalogCache();
+    if (cached) {
+      this.setData({ plans: orderPlans(cached.plans).map(toPlanView) });
+      this.load(true);
+    } else {
+      this.load();
+    }
   },
 
-  load() {
+  load(silent) {
     if (this.loading) return;
     this.loading = true;
-    this.setData({ loading: true, failed: false, errorText: '' });
+    this.setData(silent ? {} : { loading: true, failed: false, errorText: '' });
     shop
       .fetchCatalog()
       .then((data) => {
-        const plans = (data && data.plans) || [];
         this.setData({
-          plans: orderPlans(plans).map(toPlanView),
+          plans: orderPlans((data && data.plans) || []).map(toPlanView),
           loading: false,
         });
       })
       .catch((error) => {
-        this.setData({
-          loading: false,
-          failed: true,
-          errorText: error && error.message ? error.message : '服务暂不可用，请稍后重试',
-        });
+        if (!silent) {
+          this.setData({
+            loading: false,
+            failed: true,
+            errorText: error && error.message ? error.message : '服务暂不可用，请稍后重试',
+          });
+        }
       })
       .then(() => {
         this.loading = false;
@@ -110,7 +114,6 @@ Page({
       .createOrder(plan)
       .then((order) => {
         wx.hideLoading();
-        // 订单已生成，下次购买重新取号，避免复用已完成的编号
         shop.clearAttempt();
         const orderID = (order && order.id) || '';
         const queryCode = (order && order.query_code) || '';

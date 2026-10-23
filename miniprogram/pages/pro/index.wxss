@@ -2,16 +2,6 @@
   padding-top: 20rpx;
 }
 
-.pro-head {
-  padding: 8rpx 8rpx 30rpx;
-}
-
-.pro-sub {
-  font-size: 25rpx;
-  line-height: 1.7;
-  color: #9c92b4;
-}
-
 .plan-card {
   margin-bottom: 26rpx;
   padding: 30rpx 28rpx 26rpx;

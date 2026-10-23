@@ -1,6 +1,3 @@
-// 订单状态与展示映射。
-// 依据中枢返回的 payment_status / delivery_status 区分付款与交付；
-// 未知取值保留“状态待确认”，网络错误在调用方按“结果未知”处理，不判为失败。
 const TONE = {
   WAIT: 'wait',
   DELIVERING: 'delivering',
@@ -58,7 +55,7 @@ function describe(order, options) {
       return {
         key: 'delivered',
         title: '已交付',
-        hint: '祝福语与卡密已确认，可复制使用。',
+        hint: '祝福语已确认，可复制使用。',
         tone: TONE.DONE,
         canPay: false,
         canRefresh: true,
@@ -69,7 +66,7 @@ function describe(order, options) {
       return {
         key: 'delivered_confirming',
         title: '已交付',
-        hint: '微信侧发货确认仍在处理，卡密可正常使用。',
+        hint: '微信侧发货确认仍在处理，请稍后刷新。',
         tone: TONE.DONE,
         canPay: false,
         canRefresh: true,

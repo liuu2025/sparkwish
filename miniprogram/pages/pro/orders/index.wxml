@@ -1,12 +1,11 @@
 <view class="page orders">
   <view class="orders-head">
     <view class="orders-title">我的订单</view>
-    <view class="orders-sub">订单与卡密以系统返回的结果为准，重复进入不会产生新卡密。</view>
   </view>
 
   <view class="state-box" wx:if="{{!ordersReady}}">
     <view class="state-title">订单服务暂未接入</view>
-    <view class="state-text">接入完成后，可在此查看已购买的套餐与卡密。</view>
+    <view class="state-text">接入完成后，可在此查看已购买的套餐。</view>
   </view>
 
   <view class="state-box" wx:elif="{{loading}}">

@@ -12,13 +12,6 @@
   letter-spacing: 1rpx;
 }
 
-.orders-sub {
-  margin-top: 12rpx;
-  font-size: 24rpx;
-  line-height: 1.7;
-  color: #9c92b4;
-}
-
 .order-item {
   margin-bottom: 20rpx;
   padding: 26rpx 26rpx 22rpx;

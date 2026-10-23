@@ -1,9 +1,8 @@
-// 中枢购买服务对接层。
-// 只封装只读目录与订单相关接口；地址或项目未配置时直接拒绝，不发起请求。
-// 会话令牌只保存在内存，私密查询号、卡密不写入本地缓存、页面路径或日志。
 const config = require('../config/shop');
 
 const ATTEMPT_KEY = 'sparkwish:checkout-attempt';
+const CATALOG_CACHE_KEY = 'sparkwish:catalog-cache';
+const CATALOG_TTL = 5 * 60 * 1000;
 
 let session = '';
 let loginPromise = null;
@@ -61,14 +60,12 @@ function request(path, data, token) {
         reject(makeError((body && body.error) || 'request_failed', message, res.statusCode));
       },
       fail() {
-        // 结果未知：调用方保留原订单，仅重试查询，不能据此判定订单失败。
         reject(makeError('network_unknown', '网络暂未确认，请保留原订单后重试'));
       },
     });
   });
 }
 
-// force=true 时丢弃当前令牌重新换取，用于支付前刷新身份。
 function login(options) {
   if (options && options.force) session = '';
   if (session) return Promise.resolve(session);
@@ -107,11 +104,37 @@ function withSession(path, data, options) {
   );
 }
 
-// 公开套餐目录，不需要登录。
+function loadCatalogCache() {
+  try {
+    const cached = wx.getStorageSync(CATALOG_CACHE_KEY);
+    if (
+      cached &&
+      Array.isArray(cached.plans) &&
+      typeof cached.savedAt === 'number' &&
+      Date.now() - cached.savedAt < CATALOG_TTL
+    ) {
+      return cached;
+    }
+  } catch (e) {
+  }
+  return null;
+}
+
+function saveCatalogCache(plans) {
+  if (!Array.isArray(plans) || !plans.length) return;
+  try {
+    wx.setStorageSync(CATALOG_CACHE_KEY, { plans, savedAt: Date.now() });
+  } catch (e) {
+  }
+}
+
 function fetchCatalog() {
   const id = projectID();
   if (!catalogReady()) return Promise.reject(makeError('not_configured', '服务地址或项目标识尚未配置'));
-  return request('catalog?app_id=' + encodeURIComponent(id));
+  return request('catalog?app_id=' + encodeURIComponent(id)).then((data) => {
+    saveCatalogCache((data && data.plans) || []);
+    return data;
+  });
 }
 
 function fetchOrders() {
@@ -128,7 +151,6 @@ function newCheckoutID() {
   return request('checkout-id', {});
 }
 
-// 下单请求只保存恢复原订单所需的最小字段，不含令牌、查询号与卡密。
 function saveAttempt(attempt) {
   try {
     wx.setStorageSync(ATTEMPT_KEY, {
@@ -138,7 +160,6 @@ function saveAttempt(attempt) {
       checkoutID: attempt.checkoutID,
     });
   } catch (e) {
-    // 本地缓存失败不影响下单；恢复时重新取号即可。
   }
 }
 
@@ -154,7 +175,6 @@ function clearAttempt() {
   try {
     wx.removeStorageSync(ATTEMPT_KEY);
   } catch (e) {
-    // 忽略缓存清理失败。
   }
 }
 
@@ -173,7 +193,6 @@ function createOrder(input) {
   });
 }
 
-// 支付前按文档要求重新换取身份，再申请支付参数。
 function payOrder(queryCode) {
   if (!paymentReady()) {
     return Promise.reject(makeError('payment_not_enabled', '支付暂未开放'));
@@ -181,7 +200,6 @@ function payOrder(queryCode) {
   return withSession('orders/pay', { query_code: queryCode }, { force: true });
 }
 
-// 只读取订单，不触发中枢核对。
 function queryOrder(queryCode) {
   if (!ordersReady()) {
     return Promise.reject(makeError('orders_not_enabled', '订单服务暂未接入'));
@@ -189,7 +207,6 @@ function queryOrder(queryCode) {
   return withSession('orders/query', { query_code: queryCode });
 }
 
-// 请中枢核对支付，是唯一可信的付款确认方式。
 function syncOrder(queryCode) {
   if (!ordersReady()) {
     return Promise.reject(makeError('orders_not_enabled', '订单服务暂未接入'));
@@ -201,6 +218,7 @@ module.exports = {
   catalogReady,
   ordersReady,
   paymentReady,
+  loadCatalogCache,
   fetchCatalog,
   fetchOrders,
   newCheckoutID,
