@@ -19,6 +19,7 @@
       <view class="status-bar status-{{state.tone}}">
         <view class="status-title">{{state.title}}</view>
         <view class="status-hint" wx:if="{{state.hint}}">{{state.hint}}</view>
+        <view class="status-hint" wx:if="{{stageText}}">{{stageText}}</view>
       </view>
 
       <view class="section" wx:if="{{order}}">
@@ -52,7 +53,14 @@
           bindtap="onPay"
           wx:if="{{showPay}}"
         >去支付</button>
-        <button class="btn-ghost order-refresh" hover-class="btn-ghost--pressed" bindtap="onRefresh">刷新状态</button>
+        <button
+          class="btn-ghost order-refresh"
+          hover-class="btn-ghost--pressed"
+          disabled="{{verifying}}"
+          bindtap="onRetryVerify"
+          wx:if="{{state.key === 'verify_failed'}}"
+        >重试核实</button>
+        <button class="btn-ghost order-refresh" hover-class="btn-ghost--pressed" bindtap="onRefresh" wx:else>刷新状态</button>
         <view class="order-pay-hint" wx:if="{{payHint}}">{{payHint}}</view>
       </view>
 

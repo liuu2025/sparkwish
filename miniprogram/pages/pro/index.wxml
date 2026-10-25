@@ -42,4 +42,33 @@
   <view class="pro-orders" hover-class="pro-orders--pressed" bindtap="onOrders" aria-role="button" aria-label="查看我的订单">
     我的订单 ›
   </view>
+
+  <view class="confirm-mask" wx:if="{{confirmPlan}}" bindtap="onCancelBuy">
+    <view class="confirm-dialog" catchtap="noop">
+      <view class="confirm-title">确认购买</view>
+      <view class="confirm-body">
+        <view class="confirm-row">
+          <text class="confirm-label">套餐</text>
+          <text class="confirm-value">{{confirmPlan.name}}</text>
+        </view>
+        <view class="confirm-row">
+          <text class="confirm-label">价格</text>
+          <text class="confirm-price">¥{{confirmPlan.price}}</text>
+        </view>
+      </view>
+      <view class="confirm-tip">确认后将创建订单并拉起微信支付</view>
+      <view class="confirm-actions">
+        <button
+          class="btn-ghost confirm-cancel"
+          hover-class="btn-ghost--pressed"
+          bindtap="onCancelBuy"
+        >再想想</button>
+        <button
+          class="btn-primary confirm-ok"
+          hover-class="btn-primary--pressed"
+          bindtap="onConfirmBuy"
+        >确认购买</button>
+      </view>
+    </view>
+  </view>
 </view>

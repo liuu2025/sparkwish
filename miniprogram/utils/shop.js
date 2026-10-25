@@ -1,4 +1,5 @@
 const config = require('../config/shop');
+const perf = require('./perf');
 
 const ATTEMPT_KEY = 'sparkwish:checkout-attempt';
 const CATALOG_CACHE_KEY = 'sparkwish:catalog-cache';
@@ -70,6 +71,7 @@ function login(options) {
   if (options && options.force) session = '';
   if (session) return Promise.resolve(session);
   if (loginPromise) return loginPromise;
+  perf.mark('login_start');
   loginPromise = new Promise((resolve, reject) => {
     wx.login({
       success(res) {
@@ -81,10 +83,14 @@ function login(options) {
       },
     });
   })
-    .then((code) => request('mini/login', { code }))
+    .then((code) => {
+      perf.mark('wx_login_done');
+      return request('mini/login', { code });
+    })
     .then((data) => {
       session = (data && data.token) || '';
       loginPromise = null;
+      perf.mark('mp_login_done');
       return session;
     })
     .catch((error) => {
@@ -148,7 +154,11 @@ function newCheckoutID() {
   if (!ordersReady()) {
     return Promise.reject(makeError('orders_not_enabled', '订单服务暂未接入'));
   }
-  return request('checkout-id', {});
+  perf.mark('checkout_id_start');
+  return request('checkout-id', {}).then((data) => {
+    perf.mark('checkout_id_done');
+    return data;
+  });
 }
 
 function saveAttempt(attempt) {
@@ -182,6 +192,7 @@ function createOrder(input) {
   if (!ordersReady()) {
     return Promise.reject(makeError('orders_not_enabled', '订单服务暂未接入'));
   }
+  perf.mark('create_order_start');
   return withSession('orders', {
     app_id: input.projectID || projectID(),
     plan_id: input.planID,
@@ -190,6 +201,9 @@ function createOrder(input) {
     payment_method: input.paymentMethod || config.paymentMethod || 'virtual',
     qq: input.qq || '',
     email: input.email || '',
+  }).then((data) => {
+    perf.mark('create_order_done');
+    return data;
   });
 }
 
@@ -222,6 +236,7 @@ module.exports = {
   fetchCatalog,
   fetchOrders,
   newCheckoutID,
+  ensureLogin: login,
   createOrder,
   payOrder,
   queryOrder,

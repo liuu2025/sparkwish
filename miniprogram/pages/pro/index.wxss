@@ -73,3 +73,91 @@
 .pro-orders--pressed {
   background: #292136;
 }
+
+.confirm-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx;
+  background: rgba(10, 7, 16, 0.72);
+}
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 560rpx;
+  padding: 40rpx 36rpx 32rpx;
+  border: 1rpx solid #3a3050;
+  border-radius: 28rpx;
+  background: #211a2d;
+  box-shadow: 0 18rpx 48rpx rgba(0, 0, 0, 0.5);
+}
+
+.confirm-title {
+  color: #ece7f7;
+  font-size: 34rpx;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 2rpx;
+}
+
+.confirm-body {
+  margin-top: 30rpx;
+  padding: 24rpx 26rpx;
+  border-radius: 20rpx;
+  background: #191422;
+}
+
+.confirm-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.confirm-row + .confirm-row {
+  margin-top: 16rpx;
+}
+
+.confirm-label {
+  color: #857a9e;
+  font-size: 26rpx;
+}
+
+.confirm-value {
+  color: #ece7f7;
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: right;
+}
+
+.confirm-price {
+  color: #b9a8ff;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.confirm-tip {
+  margin-top: 22rpx;
+  color: #9c92b4;
+  font-size: 23rpx;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 22rpx;
+  margin-top: 32rpx;
+}
+
+.confirm-cancel {
+  flex: 1;
+  margin: 0;
+}
+
+.confirm-ok {
+  flex: 1.4;
+  margin: 0;
+}

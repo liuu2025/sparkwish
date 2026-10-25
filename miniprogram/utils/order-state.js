@@ -96,6 +96,17 @@ function describe(order, options) {
   }
 
   if (payment === 'pending') {
+    if (opts.verifyFailed === true) {
+      return {
+        key: 'verify_failed',
+        title: '结果待确认',
+        hint: '付款核实暂未完成，订单已保留，请稍后重试核实，请勿重复下单。',
+        tone: TONE.WAIT,
+        canPay: false,
+        canRefresh: true,
+        showCard,
+      };
+    }
     return {
       key: 'pending',
       title: '待付款',

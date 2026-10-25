@@ -5,6 +5,11 @@ project.private.config.json
 node_modules/
 miniprogram_npm/
 
+# 本地测试与临时产物（不入库，保留在本地 private/ 目录）
+private/
+*.log
+*.bak
+
 # 系统文件
 .DS_Store
 Thumbs.db

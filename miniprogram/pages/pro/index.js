@@ -1,6 +1,8 @@
 const config = require('../../config/shop');
 const shop = require('../../utils/shop');
 const pay = require('../../utils/pay');
+const verify = require('../../utils/verify');
+const perf = require('../../utils/perf');
 const { formatAmount } = require('../../utils/order-state');
 
 function toPlanView(plan) {
@@ -106,9 +108,37 @@ Page({
       });
       return;
     }
+    if (this.paying || this.confirming) return;
+    this.confirming = true;
+    perf.mark('buy_tap');
+    // 弹窗展示期间提前准备下单编号与登录，确认后直接复用。
+    pay.preparePurchase(plan);
+    this.setData({ confirmPlan: plan });
+  },
+
+  onConfirmBuy() {
+    const plan = this.data.confirmPlan;
+    if (!plan || this.paying) return;
+    perf.mark('buy_confirm');
+    this.setData({ confirmPlan: null });
+    this.confirming = false;
+    this.startPurchase(plan);
+  },
+
+  onCancelBuy() {
+    if (!this.data.confirmPlan) return;
+    this.setData({ confirmPlan: null });
+    this.confirming = false;
+  },
+
+  noop() {
+    // 阻止点击弹窗内容冒泡到遮罩层关闭弹窗。
+  },
+
+  startPurchase(plan) {
     if (this.paying) return;
     this.paying = true;
-    wx.showLoading({ title: '正在下单', mask: true });
+    wx.showLoading({ title: '正在准备订单', mask: true });
 
     pay
       .createOrder(plan)
@@ -121,17 +151,23 @@ Page({
           this.openOrder(orderID);
           return null;
         }
+        // 支付结果无论是成功、取消还是失败，都进入订单页：
+        // 状态一律由中枢核实结果决定，客户端回调不判定付款成败。
         return pay
           .payForOrder(queryCode)
-          .then(() => shop.syncOrder(queryCode).catch(() => {}))
+          .then(() => {
+            // 全流程唯一一次核实，在进入订单页前发起，订单页等待同一次结果。
+            verify.begin(queryCode, order);
+            this.openOrder(orderID);
+          })
           .catch((error) => {
             wx.showToast({
               title: (error && error.message) || '支付未完成，可在订单详情重试',
               icon: 'none',
               duration: 2200,
             });
-          })
-          .then(() => this.openOrder(orderID));
+            this.openOrder(orderID);
+          });
       })
       .catch((error) => {
         wx.hideLoading();

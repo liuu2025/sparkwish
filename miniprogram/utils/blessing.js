@@ -35,13 +35,15 @@ function normalizeName(value) {
 }
 
 function salutation(scene, style, name) {
+  // 输出渠道是聊天消息：称呼一律用逗号呼语（"妈妈，"），
+  // 不用书信抬头的冒号（"妈妈："在聊天气泡里会被读成发言者标签）。
   if (scene.id === 'wedding') {
-    if (name) return style === 'formal' ? name + '：' : name + '，';
-    if (style === 'formal') return '尊敬的二位：';
+    if (name) return name + '，';
+    if (style === 'formal') return '尊敬的二位，';
     if (style === 'concise') return '';
     return '两位新人，';
   }
-  if (style === 'formal') return name ? name + '：' : '尊敬的您：';
+  if (style === 'formal') return name ? name + '，' : '您好，';
   if (style === 'concise') return name ? name + '，' : '';
   if (style === 'humorous') return name ? name + '，' : '朋友，';
   return name ? name + '，' : '亲爱的朋友，';
