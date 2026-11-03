@@ -2,13 +2,67 @@
   padding-top: 20rpx;
 }
 
+.catalog-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.catalog-action {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 84rpx;
+  box-sizing: border-box;
+  padding: 0 28rpx;
+  border: 1rpx solid var(--surface-border);
+  border-radius: 22rpx;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  color: #ded4ee;
+  font-size: 26rpx;
+  line-height: 1.4;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.catalog-action--pressed {
+  background: #352a45;
+  transform: translateY(3rpx);
+  box-shadow: var(--shadow-pressed);
+}
+
+.catalog-action-arrow {
+  margin-left: 20rpx;
+}
+
+.catalog-refresh {
+  margin-left: 16rpx;
+  color: #c4aff4;
+}
+
+.catalog-refresh-icon {
+  margin-right: 12rpx;
+  font-size: 34rpx;
+}
+
+.catalog-action[disabled] {
+  color: #9c8eaf;
+  background: #241e2e;
+  box-shadow: var(--shadow-pressed);
+  transform: none;
+}
+
 .plan-card {
-  margin-bottom: 26rpx;
+  margin-bottom: 30rpx;
   padding: 30rpx 28rpx 26rpx;
-  border: 1rpx solid #332a44;
+  border: 1rpx solid var(--surface-border);
   border-radius: 26rpx;
-  background: #211a2d;
-  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.3);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
 }
 
 .plan-top {
@@ -19,10 +73,12 @@
 
 .plan-name {
   flex: 1;
+  min-width: 0;
   padding-right: 20rpx;
   font-size: 34rpx;
   font-weight: 700;
   line-height: 1.4;
+  word-break: break-word;
 }
 
 .plan-price {
@@ -37,7 +93,7 @@
   margin-top: 14rpx;
   font-size: 24rpx;
   line-height: 1.75;
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .plan-btn {
@@ -54,24 +110,8 @@
   margin-top: 14rpx;
   font-size: 22rpx;
   line-height: 1.7;
-  color: #857a9e;
+  color: #a49ab5;
   text-align: center;
-}
-
-.pro-orders {
-  margin-top: 36rpx;
-  padding: 26rpx;
-  border: 1rpx solid #332a44;
-  border-radius: 22rpx;
-  background: #211a2d;
-  color: #cfc6e2;
-  font-size: 26rpx;
-  text-align: center;
-  box-shadow: 0 8rpx 22rpx rgba(0, 0, 0, 0.26);
-}
-
-.pro-orders--pressed {
-  background: #292136;
 }
 
 .confirm-mask {
@@ -121,7 +161,7 @@
 }
 
 .confirm-label {
-  color: #857a9e;
+  color: #a49ab5;
   font-size: 26rpx;
 }
 
@@ -140,7 +180,7 @@
 
 .confirm-tip {
   margin-top: 22rpx;
-  color: #9c92b4;
+  color: #b3a8c5;
   font-size: 23rpx;
   line-height: 1.6;
   text-align: center;

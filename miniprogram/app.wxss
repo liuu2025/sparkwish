@@ -1,13 +1,13 @@
 page {
-  background: #16121d;
-  background-image: linear-gradient(
-    180deg,
-    #241a38 0%,
-    #16121d 30%,
-    #16121d 100%
-  );
-  background-repeat: no-repeat;
-  color: #ece7f7;
+  --surface-card: #272131;
+  --surface-border: #493d59;
+  --shadow-card: inset 0 1rpx 0 rgba(255, 255, 255, 0.06),
+    0 6rpx 12rpx rgba(0, 0, 0, 0.2),
+    0 20rpx 40rpx rgba(0, 0, 0, 0.3);
+  --shadow-pressed: inset 0 1rpx 0 rgba(255, 255, 255, 0.04),
+    0 3rpx 8rpx rgba(0, 0, 0, 0.24);
+  background: #15121e;
+  color: #f2edf9;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
@@ -56,12 +56,32 @@ button::after {
   height: 28rpx;
   margin-right: 14rpx;
   border-radius: 999rpx;
-  background: linear-gradient(180deg, #a06cff 0%, #6d3ef0 100%);
+  background: #a78bfa;
 }
 
 .section-hint {
   font-size: 24rpx;
-  color: #857a9e;
+  color: #a49ab5;
+}
+
+.nav-chevron {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14rpx;
+  height: 14rpx;
+  box-sizing: border-box;
+  border: solid currentColor;
+  border-width: 0 3rpx 3rpx 0;
+  color: #b6a3cf;
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
+
+.scene-card--pressed .nav-chevron,
+.teaser--pressed .nav-chevron,
+.result-teaser--pressed .nav-chevron,
+.catalog-action--pressed .nav-chevron {
+  color: #dfd2f7;
 }
 
 .btn-primary {
@@ -71,19 +91,21 @@ button::after {
   width: 100%;
   height: 96rpx;
   border-radius: 48rpx;
-  background: linear-gradient(135deg, #a06cff 0%, #7c4df2 58%, #5b2ec9 100%);
+  background: #7950dc;
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;
   letter-spacing: 2rpx;
-  box-shadow: 0 16rpx 34rpx rgba(124, 77, 242, 0.4);
+  box-shadow: inset 0 2rpx 0 rgba(255, 255, 255, 0.12),
+    0 6rpx 12rpx rgba(0, 0, 0, 0.2),
+    0 12rpx 24rpx rgba(91, 52, 170, 0.24);
   transition: box-shadow 0.18s ease, transform 0.18s ease,
     filter 0.18s ease;
 }
 
 .btn-primary--pressed {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6a35d6 100%);
-  box-shadow: 0 8rpx 18rpx rgba(124, 77, 242, 0.3);
+  background: #6840c4;
+  box-shadow: var(--shadow-pressed);
   transform: translateY(2rpx);
 }
 
@@ -94,11 +116,11 @@ button::after {
   width: 100%;
   height: 92rpx;
   border-radius: 46rpx;
-  border: 1rpx solid #3a3050;
+  border: 1rpx solid var(--surface-border);
   color: #cfc6e2;
   font-size: 28rpx;
-  background: #241d31;
-  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3);
+  background: #2b2338;
+  box-shadow: var(--shadow-pressed);
   transition: background-color 0.18s ease, transform 0.18s ease;
 }
 
@@ -112,15 +134,16 @@ button::after {
   padding: 0 8rpx;
   font-size: 22rpx;
   line-height: 1.7;
-  color: #857a9e;
+  color: #a49ab5;
   text-align: center;
 }
 
 .state-box {
   padding: 44rpx 30rpx;
-  border: 1rpx dashed #4a3d63;
+  border: 1rpx solid var(--surface-border);
   border-radius: 24rpx;
-  background: #201a2c;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
   text-align: center;
 }
 
@@ -134,7 +157,7 @@ button::after {
   margin-top: 12rpx;
   font-size: 24rpx;
   line-height: 1.7;
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .state-action {
@@ -153,8 +176,8 @@ button::after {
   color: #b9a8ff;
   font-size: 24rpx;
   line-height: 1;
-  background: #241d31;
-  box-shadow: 0 4rpx 12rpx rgba(124, 77, 242, 0.2);
+  background: #332842;
+  box-shadow: var(--shadow-pressed);
   transition: background-color 0.18s ease, transform 0.18s ease;
 }
 
@@ -166,4 +189,28 @@ button::after {
 .btn-copy[disabled] {
   border-color: #362d47;
   color: #6a6183;
+}
+
+.btn-primary[disabled],
+.btn-ghost[disabled] {
+  background: #2e2540;
+  color: #8d819f;
+  box-shadow: none;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page .btn-primary,
+  .page .btn-ghost,
+  .page .btn-copy,
+  .page .scene-card,
+  .page .teaser,
+  .page .result-teaser,
+  .page .order-item,
+  .page .catalog-action,
+  .page .chip,
+  .page .option {
+    transition: none;
+    transform: none;
+  }
 }

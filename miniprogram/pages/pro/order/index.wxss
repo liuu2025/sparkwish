@@ -6,8 +6,9 @@
   margin-bottom: 26rpx;
   padding: 28rpx 26rpx;
   border-radius: 24rpx;
-  background: linear-gradient(135deg, #241b36 0%, #1e1730 100%);
-  border: 1rpx solid #3a2d55;
+  background: #30243f;
+  border: 1rpx solid var(--surface-border);
+  box-shadow: var(--shadow-card);
 }
 
 .status-title {
@@ -19,7 +20,7 @@
   margin-top: 10rpx;
   font-size: 23rpx;
   line-height: 1.7;
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .status-wait .status-title {
@@ -35,20 +36,20 @@
 }
 
 .status-closed .status-title {
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .status-unknown .status-title {
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .section {
-  margin-bottom: 24rpx;
+  margin-bottom: 30rpx;
   padding: 26rpx;
-  border: 1rpx solid #332a44;
+  border: 1rpx solid var(--surface-border);
   border-radius: 24rpx;
-  background: #211a2d;
-  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.26);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
 }
 
 .section-head {
@@ -72,7 +73,7 @@
 .kv-label {
   flex-shrink: 0;
   width: 140rpx;
-  color: #857a9e;
+  color: #a49ab5;
   font-size: 23rpx;
 }
 
@@ -102,7 +103,7 @@
   padding: 22rpx 20rpx;
   border-radius: 16rpx;
   background: #2a2138;
-  color: #857a9e;
+  color: #a49ab5;
   font-size: 23rpx;
   line-height: 1.7;
 }
@@ -119,7 +120,7 @@
   margin-top: 16rpx;
   font-size: 22rpx;
   line-height: 1.7;
-  color: #857a9e;
+  color: #a49ab5;
   text-align: center;
 }
 

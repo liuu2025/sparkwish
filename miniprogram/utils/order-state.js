@@ -55,7 +55,7 @@ function describe(order, options) {
       return {
         key: 'delivered',
         title: '已交付',
-        hint: '祝福语已确认，可复制使用。',
+        hint: '',
         tone: TONE.DONE,
         canPay: false,
         canRefresh: true,
@@ -87,7 +87,7 @@ function describe(order, options) {
     return {
       key: 'paid_unknown_delivery',
       title: '已付款，状态待确认',
-      hint: '请刷新状态，以中枢返回的结果为准。',
+      hint: '请刷新状态，以返回的结果为准。',
       tone: TONE.UNKNOWN,
       canPay: false,
       canRefresh: true,

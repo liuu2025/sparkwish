@@ -46,17 +46,21 @@ Page({
   data: {
     catalogReady: false,
     loading: false,
+    refreshing: false,
     failed: false,
     errorText: '',
     plans: [],
   },
 
   onLoad() {
+    this.catalogDisposed = false;
     if (!shop.catalogReady()) {
       this.setData({ catalogReady: false });
       return;
     }
     this.setData({ catalogReady: true });
+    // Prepare identity without delaying catalog rendering or creating an order.
+    if (shop.ordersReady()) shop.ensureLogin({ checkWechat: true }).catch(() => null);
     const cached = shop.loadCatalogCache();
     if (cached) {
       this.setData({ plans: orderPlans(cached.plans).map(toPlanView) });
@@ -69,19 +73,27 @@ Page({
   load(silent) {
     if (this.loading) return;
     this.loading = true;
-    this.setData(silent ? {} : { loading: true, failed: false, errorText: '' });
-    shop
+    const hasPlans = this.data.plans.length > 0;
+    this.setData({ loading: !hasPlans, refreshing: true, failed: false, errorText: '' });
+    return shop
       .fetchCatalog()
       .then((data) => {
+        if (this.catalogDisposed) return;
         this.setData({
           plans: orderPlans((data && data.plans) || []).map(toPlanView),
-          loading: false,
         });
+        if (!silent && hasPlans) {
+          wx.showToast({ title: '套餐已更新', icon: 'success', duration: 1500 });
+        }
       })
       .catch((error) => {
-        if (!silent) {
+        if (this.catalogDisposed) return;
+        if (hasPlans) {
+          if (!silent) {
+            wx.showToast({ title: '刷新失败，请稍后重试', icon: 'none', duration: 2000 });
+          }
+        } else {
           this.setData({
-            loading: false,
             failed: true,
             errorText: error && error.message ? error.message : '服务暂不可用，请稍后重试',
           });
@@ -89,12 +101,18 @@ Page({
       })
       .then(() => {
         this.loading = false;
+        if (!this.catalogDisposed) this.setData({ loading: false, refreshing: false });
       });
   },
 
   onRetry() {
     if (!this.data.catalogReady) return;
-    this.load();
+    return this.load();
+  },
+
+  onUnload() {
+    this.catalogDisposed = true;
+    this.hidePurchaseLoading();
   },
 
   onBuy(e) {
@@ -138,29 +156,42 @@ Page({
   startPurchase(plan) {
     if (this.paying) return;
     this.paying = true;
-    wx.showLoading({ title: '正在准备订单', mask: true });
+    this.showPurchaseLoading('正在准备订单');
 
-    pay
-      .createOrder(plan)
+    return pay
+      .createOrder(plan, {
+        beforeSubmit: () => {
+          if (this.catalogDisposed) throw new Error('购买页面已关闭');
+        },
+      })
       .then((order) => {
-        wx.hideLoading();
-        shop.clearAttempt();
+        if (this.catalogDisposed) return null;
         const orderID = (order && order.id) || '';
         const queryCode = (order && order.query_code) || '';
         if (!queryCode) {
+          this.hidePurchaseLoading();
           this.openOrder(orderID);
           return null;
         }
         // 支付结果无论是成功、取消还是失败，都进入订单页：
         // 状态一律由中枢核实结果决定，客户端回调不判定付款成败。
+        this.showPurchaseLoading('正在准备支付');
         return pay
-          .payForOrder(queryCode)
+          .payForOrder(queryCode, {
+            beforeInvoke: () => {
+              if (this.catalogDisposed) throw new Error('购买页面已关闭');
+              this.hidePurchaseLoading();
+            },
+          })
           .then(() => {
+            if (this.catalogDisposed) return;
             // 全流程唯一一次核实，在进入订单页前发起，订单页等待同一次结果。
             verify.begin(queryCode, order);
             this.openOrder(orderID);
           })
           .catch((error) => {
+            this.hidePurchaseLoading();
+            if (this.catalogDisposed) return;
             wx.showToast({
               title: (error && error.message) || '支付未完成，可在订单详情重试',
               icon: 'none',
@@ -170,7 +201,8 @@ Page({
           });
       })
       .catch((error) => {
-        wx.hideLoading();
+        this.hidePurchaseLoading();
+        if (this.catalogDisposed) return;
         wx.showToast({
           title: (error && error.message) || '下单失败，请稍后重试',
           icon: 'none',
@@ -178,8 +210,20 @@ Page({
         });
       })
       .then(() => {
+        this.hidePurchaseLoading();
         this.paying = false;
       });
+  },
+
+  showPurchaseLoading(title) {
+    this.purchaseLoading = true;
+    wx.showLoading({ title, mask: true });
+  },
+
+  hidePurchaseLoading() {
+    if (!this.purchaseLoading) return;
+    this.purchaseLoading = false;
+    wx.hideLoading();
   },
 
   openOrder(orderID) {

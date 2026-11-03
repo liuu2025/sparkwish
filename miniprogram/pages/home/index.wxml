@@ -21,9 +21,11 @@
       aria-role="button"
       aria-label="选择{{item.name}}场景"
     >
-      <view class="scene-name">{{item.name}}</view>
+      <view class="scene-head">
+        <view class="scene-name">{{item.name}}</view>
+        <view class="nav-chevron scene-arrow" aria-hidden="true"></view>
+      </view>
       <view class="scene-desc">{{item.desc}}</view>
-      <view class="scene-arrow">→</view>
     </view>
   </view>
 
@@ -32,10 +34,11 @@
     hover-class="teaser--pressed"
     bindtap="onOpenPro"
     aria-role="button"
-    aria-label="高级祝福语"
+    aria-label="权益中心，查看套餐与已购订单"
   >
-    <view class="teaser-title">高级祝福语</view>
-    <view class="teaser-arrow">→</view>
+    <view class="teaser-title">权益中心</view>
+    <view class="teaser-sub">查看套餐与已购订单</view>
+    <view class="nav-chevron teaser-arrow" aria-hidden="true"></view>
   </view>
 
   <view class="version" wx:if="{{version}}">版本 {{version}}</view>

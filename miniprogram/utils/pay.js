@@ -2,32 +2,57 @@ const config = require('../config/shop');
 const shop = require('./shop');
 const perf = require('./perf');
 
+let checkoutFlight = null;
+
 function ensureCheckout(plan) {
-  const saved = shop.loadAttempt();
+  const projectID = config.projectID;
+  const planID = plan.id;
+  const planVersion = Number(plan.version);
+  const key = JSON.stringify([projectID, planID, planVersion]);
+  if (checkoutFlight && checkoutFlight.key === key) return checkoutFlight.promise;
+
+  let saved;
+  try {
+    saved = shop.loadAttempt();
+  } catch (error) {
+    return Promise.reject(error);
+  }
   const reusable =
     saved &&
     saved.checkoutID &&
-    saved.projectID === config.projectID &&
-    saved.planID === plan.id &&
-    Number(saved.planVersion) === Number(plan.version);
+    saved.projectID === projectID &&
+    saved.planID === planID &&
+    Number(saved.planVersion) === planVersion;
 
-  if (reusable) return Promise.resolve(saved);
+  if (reusable) {
+    // Selecting an existing attempt also supersedes other pending preparations.
+    checkoutFlight = null;
+    return Promise.resolve(saved);
+  }
 
-  return shop.newCheckoutID().then((data) => {
-    const checkoutID = data && data.checkout_id;
-    if (!checkoutID) throw new Error('下单编号获取失败，请稍后重试');
-    const attempt = {
-      projectID: config.projectID,
-      planID: plan.id,
-      planVersion: plan.version,
-      checkoutID,
-    };
-    shop.saveAttempt(attempt);
-    return attempt;
-  });
+  const flight = { key, promise: null };
+  checkoutFlight = flight;
+  flight.promise = Promise.resolve()
+    .then(() => shop.newCheckoutID())
+    .then((data) => {
+      const checkoutID = data && data.checkout_id;
+      if (typeof checkoutID !== 'string' || !checkoutID) throw new Error('下单编号获取失败，请稍后重试');
+      const attempt = { projectID, planID, planVersion, checkoutID };
+      // A cancelled selection's late response cannot overwrite the new attempt.
+      if (checkoutFlight === flight) shop.saveAttempt(attempt);
+      return attempt;
+    })
+    .then((attempt) => {
+      if (checkoutFlight === flight) checkoutFlight = null;
+      return attempt;
+    }, (error) => {
+      if (checkoutFlight === flight) checkoutFlight = null;
+      throw error;
+    });
+  return flight.promise;
 }
 
-function createOrder(plan) {
+function createOrder(plan, options) {
   if (!plan || !plan.id) {
     return Promise.reject(new Error('套餐信息不完整，请返回后重试'));
   }
@@ -35,10 +60,20 @@ function createOrder(plan) {
   return Promise.all([ensureCheckout(plan), shop.ensureLogin()])
     .then((results) => {
       const attempt = results[0];
+      if (options && options.beforeSubmit) options.beforeSubmit();
       return shop.createOrder({
-        planID: plan.id,
-        planVersion: plan.version,
+        projectID: attempt.projectID,
+        planID: attempt.planID,
+        planVersion: attempt.planVersion,
         checkoutID: attempt.checkoutID,
+      }).then((order) => {
+        if (!order || typeof order.id !== 'string' || !order.id) {
+          throw new Error('订单结果暂未确认，请保留原下单信息后重试');
+        }
+        // Only this confirmed attempt may be cleared; another page may already
+        // be preparing a different purchase when this response arrives late.
+        shop.clearAttempt(attempt.checkoutID);
+        return order;
       });
     });
 }
@@ -89,8 +124,9 @@ function fetchPayParams(queryCode) {
 }
 
 // 获取参数并拉起微信收银台。
-function payForOrder(queryCode) {
+function payForOrder(queryCode, options) {
   return fetchPayParams(queryCode).then((virtualPayment) => {
+    if (options && options.beforeInvoke) options.beforeInvoke();
     perf.mark('pay_invoke');
     return requestPayment(virtualPayment).then(() => {
       perf.mark('pay_callback');

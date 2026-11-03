@@ -6,7 +6,9 @@ const CATALOG_CACHE_KEY = 'sparkwish:catalog-cache';
 const CATALOG_TTL = 5 * 60 * 1000;
 
 let session = '';
-let loginPromise = null;
+let sessionStartedAt = 0;
+let sessionExpiresAt = 0;
+let loginFlight = null;
 
 function rootURL() {
   const value = String(config.baseURL || '').replace(/\/+$/, '');
@@ -67,13 +69,44 @@ function request(path, data, token) {
   });
 }
 
-function login(options) {
-  if (options && options.force) session = '';
-  if (session) return Promise.resolve(session);
-  if (loginPromise) return loginPromise;
+function sessionUsable() {
+  const now = Date.now();
+  return !!session && now >= sessionStartedAt && now < sessionExpiresAt;
+}
+
+function clearSession() {
+  session = '';
+  sessionStartedAt = 0;
+  sessionExpiresAt = 0;
+}
+
+function checkWechatSession() {
+  if (typeof wx.checkSession !== 'function') return Promise.resolve(false);
+  return new Promise((resolve) => {
+    let finished = false;
+    const finish = (valid) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      resolve(valid);
+    };
+    // Native checks must not leave payment preparation waiting indefinitely.
+    const timer = setTimeout(() => finish(false), 3000);
+    try {
+      wx.checkSession({ success: () => finish(true), fail: () => finish(false) });
+    } catch (error) {
+      finish(false);
+    }
+  });
+}
+
+function renewLogin() {
+  clearSession();
+  const startedAt = Date.now();
   perf.mark('login_start');
-  loginPromise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     wx.login({
+      timeout: config.timeout || 15000,
       success(res) {
         if (res && res.code) resolve(res.code);
         else reject(makeError('login_failed', '微信身份验证失败，请重新进入'));
@@ -88,24 +121,60 @@ function login(options) {
       return request('mini/login', { code });
     })
     .then((data) => {
-      session = (data && data.token) || '';
-      loginPromise = null;
+      const token = data && data.token;
+      const ttl = Number(data && data.expires_in);
+      if (typeof token !== 'string' || !/^[a-f0-9]{64}$/i.test(token) || !Number.isFinite(ttl) || ttl <= 0) {
+        throw makeError('login_failed', '微信身份验证未完成，请稍后重试');
+      }
+      session = token;
+      sessionStartedAt = startedAt;
+      // Count from request start; the backend remains authoritative on expiry.
+      sessionExpiresAt = startedAt + Math.max(0, Math.min(ttl, 604800) * 1000 - 30000);
       perf.mark('mp_login_done');
       return session;
+    });
+}
+
+function login(options) {
+  const settings = options || {};
+  // A late 401 for an older token must not invalidate a newer completed login.
+  const force = settings.force && (!settings.rejectedToken || !session || session === settings.rejectedToken);
+  if (force) {
+    clearSession();
+    if (loginFlight) loginFlight.force = true;
+  }
+  if (loginFlight) return loginFlight.promise;
+  if (!force && sessionUsable() && !settings.checkWechat) return Promise.resolve(session);
+
+  const flight = { force: !!force, promise: null };
+  loginFlight = flight;
+  flight.promise = Promise.resolve()
+    .then(() => {
+      if (flight.force || !sessionUsable()) return renewLogin();
+      // All wx.login calls are centralized here. checkSession validates the
+      // last obtained code's session_key, which is the one behind this token.
+      const checkedToken = session;
+      return checkWechatSession().then((valid) => {
+        if (valid && !flight.force && checkedToken === session && sessionUsable()) return session;
+        return renewLogin();
+      });
     })
-    .catch((error) => {
-      loginPromise = null;
+    .then((token) => {
+      if (loginFlight === flight) loginFlight = null;
+      return token;
+    }, (error) => {
+      if (loginFlight === flight) loginFlight = null;
       throw error;
     });
-  return loginPromise;
+  return flight.promise;
 }
 
 function withSession(path, data, options) {
   return login(options).then((token) =>
     request(path, data, token).catch((error) => {
       if (error.status !== 401) throw error;
-      session = '';
-      return login({ force: true }).then((next) => request(path, data, next));
+      return login({ force: true, rejectedToken: token, checkWechat: options && options.checkWechat })
+        .then((next) => request(path, data, next));
     })
   );
 }
@@ -127,7 +196,7 @@ function loadCatalogCache() {
 }
 
 function saveCatalogCache(plans) {
-  if (!Array.isArray(plans) || !plans.length) return;
+  if (!Array.isArray(plans)) return;
   try {
     wx.setStorageSync(CATALOG_CACHE_KEY, { plans, savedAt: Date.now() });
   } catch (e) {
@@ -170,19 +239,33 @@ function saveAttempt(attempt) {
       checkoutID: attempt.checkoutID,
     });
   } catch (e) {
+    throw makeError('attempt_storage_unavailable', '下单信息暂时无法保存，请稍后重试');
   }
 }
 
 function loadAttempt() {
   try {
-    return wx.getStorageSync(ATTEMPT_KEY) || null;
+    const attempt = wx.getStorageSync(ATTEMPT_KEY);
+    if (!attempt) return null;
+    if (typeof attempt !== 'object' || Array.isArray(attempt) ||
+        typeof attempt.checkoutID !== 'string' || !attempt.checkoutID ||
+        typeof attempt.projectID !== 'string' || !attempt.projectID ||
+        typeof attempt.planID !== 'string' || !attempt.planID ||
+        !Number.isSafeInteger(Number(attempt.planVersion)) || Number(attempt.planVersion) <= 0) {
+      throw new Error('Invalid checkout attempt');
+    }
+    return attempt;
   } catch (e) {
-    return null;
+    throw makeError('attempt_storage_unavailable', '原下单信息暂时无法读取，请稍后重试');
   }
 }
 
-function clearAttempt() {
+function clearAttempt(checkoutID) {
   try {
+    if (checkoutID) {
+      const saved = wx.getStorageSync(ATTEMPT_KEY);
+      if (!saved || saved.checkoutID !== checkoutID) return;
+    }
     wx.removeStorageSync(ATTEMPT_KEY);
   } catch (e) {
   }
@@ -211,7 +294,7 @@ function payOrder(queryCode) {
   if (!paymentReady()) {
     return Promise.reject(makeError('payment_not_enabled', '支付暂未开放'));
   }
-  return withSession('orders/pay', { query_code: queryCode }, { force: true });
+  return withSession('orders/pay', { query_code: queryCode }, { checkWechat: true });
 }
 
 function queryOrder(queryCode) {

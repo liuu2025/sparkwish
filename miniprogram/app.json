@@ -8,9 +8,9 @@
     "pages/pro/order/index"
   ],
   "window": {
-    "backgroundColor": "#16121D",
+    "backgroundColor": "#15121E",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#16121D",
+    "navigationBarBackgroundColor": "#15121E",
     "navigationBarTitleText": "祝福语",
     "navigationBarTextStyle": "white"
   },

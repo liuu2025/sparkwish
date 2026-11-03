@@ -1,4 +1,13 @@
 <view class="page pro">
+  <view class="catalog-toolbar">
+    <button class="catalog-action catalog-orders" hover-class="catalog-action--pressed" bindtap="onOrders" aria-label="查看我的订单">
+      <text>我的订单</text><view class="nav-chevron catalog-action-arrow" aria-hidden="true"></view>
+    </button>
+    <button class="catalog-action catalog-refresh" hover-class="catalog-action--pressed" bindtap="onRetry" disabled="{{!catalogReady || refreshing}}" aria-label="刷新套餐列表">
+      <text class="catalog-refresh-icon">↻</text><text>{{refreshing ? '刷新中…' : '刷新'}}</text>
+    </button>
+  </view>
+
   <view class="state-box" wx:if="{{!catalogReady}}">
     <view class="state-title">商品信息暂未配置</view>
     <view class="state-text">套餐名称与价格将在配置完成后显示，当前暂不支持购买。</view>
@@ -38,10 +47,6 @@
       <view class="plan-hint" wx:if="{{plan.buyHint}}">{{plan.buyHint}}</view>
     </view>
   </block>
-
-  <view class="pro-orders" hover-class="pro-orders--pressed" bindtap="onOrders" aria-role="button" aria-label="查看我的订单">
-    我的订单 ›
-  </view>
 
   <view class="confirm-mask" wx:if="{{confirmPlan}}" bindtap="onCancelBuy">
     <view class="confirm-dialog" catchtap="noop">

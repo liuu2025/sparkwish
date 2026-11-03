@@ -46,10 +46,13 @@
     hover-class="result-teaser--pressed"
     bindtap="onOpenPro"
     aria-role="button"
-    aria-label="高级祝福语"
+    aria-label="权益中心，查看套餐与已购订单"
   >
-    <text class="result-teaser-text">想看高级祝福语？点这里查看。</text>
-    <text class="result-teaser-arrow">›</text>
+    <view class="result-teaser-copy">
+      <view class="result-teaser-title">权益中心</view>
+      <view class="result-teaser-text">查看套餐与已购订单</view>
+    </view>
+    <view class="nav-chevron result-teaser-arrow" aria-hidden="true"></view>
   </view>
 
   <view class="footnote">

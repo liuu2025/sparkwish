@@ -13,16 +13,20 @@
 }
 
 .order-item {
-  margin-bottom: 20rpx;
+  margin-bottom: 28rpx;
   padding: 26rpx 26rpx 22rpx;
-  border: 1rpx solid #332a44;
+  border: 1rpx solid var(--surface-border);
   border-radius: 24rpx;
-  background: #211a2d;
-  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.28);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .order-item--pressed {
-  background: #292136;
+  background: #30273e;
+  transform: translateY(3rpx);
+  box-shadow: var(--shadow-pressed);
 }
 
 .order-item-top {
@@ -33,10 +37,12 @@
 
 .order-item-name {
   flex: 1;
+  min-width: 0;
   padding-right: 18rpx;
   font-size: 30rpx;
   font-weight: 600;
   color: #ece7f7;
+  word-break: break-word;
 }
 
 .order-item-status {
@@ -64,18 +70,18 @@
 
 .status-closed {
   background: rgba(255, 255, 255, 0.07);
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .status-unknown {
   background: rgba(255, 255, 255, 0.07);
-  color: #9c92b4;
+  color: #b3a8c5;
 }
 
 .order-item-meta {
   margin-top: 10rpx;
   font-size: 23rpx;
-  color: #857a9e;
+  color: #a49ab5;
 }
 
 .orders-foot {
